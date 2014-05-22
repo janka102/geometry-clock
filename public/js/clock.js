@@ -56,8 +56,8 @@ function canvasToFavicon() {
 }
 
 function create() {
-    game.stage.disableVisibilityChange = false;
-    
+    game.stage.disableVisibilityChange = true;
+
     clockCenter = new Phaser.Point(game.world.centerX, game.world.centerY);
     clockHour = new Phaser.Point(clockCenter.x, clockCenter.y - 175);
     clockMinute = new Phaser.Point(clockCenter.x, clockCenter.y - 250);
