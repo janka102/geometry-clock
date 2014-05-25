@@ -10,22 +10,32 @@ GeometryHand.prototype.update = function(degree) {
         distance = this.clockCenter.x * this.percentFromCenter;
 
     this.x = this.clockCenter.x + distance * Math.cos(radian);
-    this.y = this.clockCenter.x + distance * Math.sin(radian);
+    this.y = this.clockCenter.y + distance * Math.sin(radian);
 };
 
 function GeometryClock(canvas, properties) {
+    var defaults = {
+        size: 600,
+        backgroundColor: '#181818',
+        fillColor: '#ffff00',
+        delay: 100,
+        afterDraw: function() {}
+    };
+
     if (!canvas instanceof HTMLElement) {
         canvas = document.createElement('canvas');
         document.body.appendChild(canvas);
     }
 
     if (typeof properties !== 'object') {
-        properties = {
-            size: 600,
-            backgroundColor: '#181818',
-            fillColor: '#ffff00',
-            delay: 100,
-            afterDraw: function() {}
+        properties = defaults;
+    } else {
+        for (var prop in defaults) {
+            if (defaults.hasOwnProperty(prop)) {
+                if (!properties[prop]) {
+                    properties[prop] = defaults[prop];
+                }
+            }
         }
     }
 
@@ -90,6 +100,7 @@ GeometryClock.prototype.draw = function() {
     // this.ctx.lineTo(this.secondHand.x, this.secondHand.y);
     this.ctx.closePath();
     this.ctx.lineJoin = 'round';
+    // Make the line more prominent sizes less than 100
     this.ctx.lineWidth = 10 * (this.properties.size < 100 ? this.properties.size * 3 : this.properties.size) / 600;
     this.ctx.stroke();
     this.ctx.fill();
