@@ -1,4 +1,4 @@
-var game = new Phaser.Game(600, 600, Phaser.CANVAS, 'geometry-clock', {create: create, update: update, render: render });
+var game = new Phaser.Game(600, 600, Phaser.CANVAS, 'geometry-clock', {preload: preload, create: create, update: update, render: render });
 
 var clockCenter,
     clockHour,
@@ -25,17 +25,17 @@ function changeFavicon(src) {
 function canvasToFavicon() {
     var canvas = document.getElementById('resizer'),
         ctx = canvas.getContext('2d'),
-        width = 16,
-        height = 16;
+        width = height = 16,
+        scale = width / game.canvas.width;
 
     canvas.width = width;
     canvas.height = height;
 
     ctx.clearRect(0, 0, width, height);
 
-    ctx.fillStyle = '#111111';
+    ctx.fillStyle = '#222222';
     ctx.beginPath();
-    ctx.arc(width / 2, height / 2, 8, 0, 2 * Math.PI, false);
+    ctx.arc(width / 2, height / 2, width / 2, 0, 2 * Math.PI, false);
     ctx.fill();
     ctx.closePath();
 
@@ -43,10 +43,9 @@ function canvasToFavicon() {
     ctx.fillStyle = 'rgb(255,255,0)';
     ctx.beginPath();
     ctx.moveTo(width / 2, height / 2);
-    ctx.lineTo(clockHour.x * (16/600), clockHour.y * (16/600));
-    ctx.lineTo(clockMinute.x * (16/600), clockMinute.y * (16/600));
+    ctx.lineTo(clockHour.x * scale, clockHour.y * scale);
+    ctx.lineTo(clockMinute.x * scale, clockMinute.y * scale);
     ctx.closePath();
-    ctx.lineJoin = 'round';
     ctx.lineWidth = 1;
     ctx.stroke();
     ctx.fill();
@@ -55,30 +54,26 @@ function canvasToFavicon() {
     changeFavicon(canvas.toDataURL());
 }
 
-function create() {
+function preload() {
     game.stage.disableVisibilityChange = true;
+}
 
+function create() {
     clockCenter = new Phaser.Point(game.world.centerX, game.world.centerY);
     clockHour = new Phaser.Point(clockCenter.x, clockCenter.y - 175);
     clockMinute = new Phaser.Point(clockCenter.x, clockCenter.y - 250);
     // clockSecond = new Phaser.Point(clockCenter.x, clockCenter.y - 275);
 
-    // digitalClock = game.add.text(game.world.centerX, 50, '', {
-    //     font: "35px Arial",
-    //     fill: "#FF0",
-    //     align: "center"
-    // });
+    digitalClock = game.add.text(game.world.centerX, 50, '', {
+        font: '35px Arial',
+        fill: '#FF0',
+        align: 'center'
+    });
 
-    // digitalClock.anchor.setTo(0.5);
+    digitalClock.anchor.setTo(0.5);
 }
 
 function update() {
-    if (faviconCounter % 30 === 0) {
-        canvasToFavicon(game.canvas.toDataURL());
-        faviconCounter = 0;
-    }
-    faviconCounter++;
-
     // I subtract 90deg because clocks start at -90deg
     var now = new Date(),
         millisecond = (now.getMilliseconds() * 0.36) - 90,
@@ -90,22 +85,24 @@ function update() {
     clockMinute.rotate(clockCenter.x, clockCenter.y, minute, true);
     // clockSecond.rotate(clockCenter.x, clockCenter.y, second, true);
 
-    // digitalClock.setText(now.getHours() % 12 + ':' + now.getMinutes() + ':' + now.getSeconds());
+    digitalClock.setText(now.getHours() % 12 + ':' + now.getMinutes() + ':' + now.getSeconds());
 }
 
 function render() {
-    game.context.fillStyle = '#111111';
+    // Draw the background circle
+    game.context.fillStyle = '#181818';
     game.context.beginPath();
     game.context.arc(clockCenter.x, clockCenter.y, 290, 0, 2 * Math.PI, false);
     game.context.fill();
     game.context.closePath();
 
+    // Draw triangle with minute and second
     game.context.strokeStyle = 'rgb(255,255,0)';
     game.context.fillStyle = 'rgb(255,255,0)';
     game.context.beginPath();
     game.context.moveTo(clockCenter.x, clockCenter.y);
-    game.context.lineTo(clockHour.x, clockHour.y);
     game.context.lineTo(clockMinute.x, clockMinute.y);
+    game.context.lineTo(clockHour.x, clockHour.y);
     // game.context.lineTo(clockSecond.x, clockSecond.y);
     game.context.closePath();
     game.context.lineJoin = 'round';
@@ -114,11 +111,33 @@ function render() {
     game.context.fill();
     game.context.closePath();
 
-    // game.context.strokeStyle = 'rgb(255,0,0)';
+    // Draw the triangle with hour and second
+    // game.context.strokeStyle = 'rgb(0,255,255)';
+    // game.context.fillStyle = 'rgb(0,255,255)';
+    // game.context.beginPath();
+    // game.context.moveTo(clockCenter.x, clockCenter.y);
+    // game.context.lineTo(clockHour.x, clockHour.y);
+    // game.context.lineTo(clockSecond.x, clockSecond.y);
+    // game.context.closePath();
+    // game.context.lineJoin = 'round';
+    // game.context.lineWidth = 10;
+    // game.context.stroke();
+    // game.context.fill();
+    // game.context.closePath();
+
+    // Draw the second hand separately
+    // game.context.strokeStyle = 'rgb(255,255,0)';
     // game.context.fillStyle = '';
     // game.context.beginPath();
     // game.context.moveTo(clockCenter.x, clockCenter.y);
     // game.context.lineTo(clockSecond.x, clockSecond.y);
     // game.context.stroke();
     // game.context.closePath();
+
+    // Only update the favicon every once in a while
+    if (faviconCounter % 60 === 0) {
+        canvasToFavicon(game.canvas.toDataURL());
+        faviconCounter = 0;
+    }
+    faviconCounter++;
 }
