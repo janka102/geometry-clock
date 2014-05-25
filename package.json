@@ -1,9 +1,9 @@
 {
   "name": "geometry-clock",
-  "version": "0.0.0",
-  "description": "From https://www.behance.net/gallery/15750899/Geometry-Clock",
+  "version": "0.0.1",
+  "description": "Inspired by https://www.behance.net/gallery/15750899/Geometry-Clock",
   "scripts": {
-    "start": "nodemon --ignore bower_components/ --ignore node_modules/ index.js"
+    "start": "nodemon --watch public index.js"
   },
   "author": "Jesse Smick",
   "license": "MIT",
