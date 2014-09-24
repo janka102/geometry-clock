@@ -73,7 +73,7 @@ GeometryClock.prototype.update = function() {
         second = (time.getSeconds() * 6 + millisecond / 60) - 90,
         minute = (time.getMinutes() * 6 + second / 60) - 90,
         hour = ((((time.getHours() % 12) / 12) * 360) + minute / 12) - 90;
-    
+
     this.secondHand.update(second);
     this.minuteHand.update(minute);
     this.hourHand.update(hour);
@@ -128,7 +128,7 @@ function changeFavicon(src) {
         document.head.removeChild(oldLink);
     }
 
-     document.head.appendChild(link);
+    document.head.appendChild(link);
 }
 
 var clock = new GeometryClock(document.getElementById('clock'));
