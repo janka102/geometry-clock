@@ -6,7 +6,7 @@ function GeometryHand(clockCenter, percentFromCenter) {
 }
 
 GeometryHand.prototype.update = function(degree) {
-    var radian = degree * (2 * Math.PI / 360),
+    var radian = degree * (Math.PI / 180),
         distance = this.clockCenter.x * this.percentFromCenter;
 
     this.x = this.clockCenter.x + distance * Math.cos(radian);
