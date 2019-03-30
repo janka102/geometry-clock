@@ -1,7 +1,17 @@
-var express = require('express'),
-    path = require('path'),
-    app = express();
+var finalhandler = require('finalhandler');
+var http = require('http');
+var serveStatic = require('serve-static');
 
-app.use(express.static(path.join(__dirname, 'public')));
+// Serve up public folder
+var serve = serveStatic('public');
 
-app.listen(3000);
+// Create server
+var server = http.createServer(function onRequest(req, res) {
+  serve(req, res, finalhandler(req, res));
+});
+
+// Listen
+server.listen(3000, function() {
+  var info = server.address();
+  console.log('=> Static server running on ' + info.address + ':' + info.port);
+});
